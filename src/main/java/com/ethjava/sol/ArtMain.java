@@ -80,16 +80,23 @@ public class ArtMain {
 	}
 	private static void use() {	
 		String contractAddress = "0x47bA663EC1B083D6316a9AE29C395180DC461bFA";	
+		int max=10;
+		int min=2;
+		int randomNumber = (int) Math.round(Math.random()*(max-min)+min); 
+		
+		System.out.println("10~100之间随机数："+randomNumber);
 		ArtToken contract = ArtToken.load(contractAddress, web3j, credentials,
-				Convert.toWei("10", Convert.Unit.GWEI).toBigInteger(),
+				Convert.toWei(String.valueOf(randomNumber), Convert.Unit.GWEI).toBigInteger(),
 				BigInteger.valueOf(100000));
 		String myAddress = "0x579503Df81E09f304eB8a0ef843aebbE4b9ab72e";
-		String toAddress = null;
-		BigInteger amount = BigInteger.ONE;
+		String toAddress = "0x02B7467c6Df772A7D3B8C346afD6DA4923e9B16A";
+		BigInteger amount = new BigInteger("10000000000000000000");
 		try {
 			BigInteger balance = contract.balanceOf(myAddress).send();
 			System.out.println("balance:"+balance);
-			//TransactionReceipt receipt = contract.transfer(toAddress, amount).send();
+			TransactionReceipt receipt = contract.transfer(toAddress, amount).send();
+			System.out.println("gasUsed:"+receipt.getGasUsed());
+			System.out.println("transHash:"+receipt.getTransactionHash());
 			//etc..
 		} catch (Exception e) {
 			e.printStackTrace();
