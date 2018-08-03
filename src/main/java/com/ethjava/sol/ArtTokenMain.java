@@ -21,7 +21,7 @@ import com.ethjava.utils.Environment;
 import java.io.IOException;
 import java.math.BigInteger;
 
-public class ArtMain {
+public class ArtTokenMain {
 	private static Credentials credentials;
 	private static Web3j web3j ;
 	
