@@ -23,7 +23,7 @@ public class AccountManager {
 		getAccountList();
 		unlockAccount();
 
-//		admin.personalSendTransaction(); 该方法与web3j.sendTransaction相同 不在此写例子。
+		//admin.personalSendTransaction();// 该方法与web3j.sendTransaction相同 不在此写例子。
 	}
 
 	/**

@@ -48,7 +48,7 @@ public class EthMnemonic {
 		list.add("color");
 		list.add("cruel");
 		list.add("casino");
-		list.add("blame");
+		list.add("blames");
 //		importMnemonic(ETH_TYPE, list, "11111111");
 	}
 
