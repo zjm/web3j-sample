@@ -12,8 +12,13 @@ import java.math.BigInteger;
 
 public class SolSample {
 	public static void main(String[] args) {
-		deploy();
-		use();
+		
+		Credentials credentials = Credentials.create("d2d3ac78638113e4c4cce38e6c77db66bea06a845986e760918995bf4fe427cc");//可以根据私钥生成
+		//d2d3ac78638113e4c4cce38e6c77db66bea06a845986e760918995bf4fe427cc
+		System.out.println(credentials.getAddress());
+		
+//		deploy();
+//		use();
 	}
 
 	private static void deploy() {

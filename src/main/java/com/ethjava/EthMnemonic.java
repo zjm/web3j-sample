@@ -49,7 +49,7 @@ public class EthMnemonic {
 		list.add("cruel");
 		list.add("casino");
 		list.add("blames");
-//		importMnemonic(ETH_TYPE, list, "11111111");
+		//importMnemonic(ETH_TYPE, list, "11111111");
 	}
 
 	public static EthHDWallet generateMnemonic(String path, String password) {
