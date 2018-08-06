@@ -15,7 +15,7 @@ public class Security {
 	public static void main(String[] args) {
 		web3j = Web3j.build(new HttpService(Environment.RPC_URL));
 
-		exportPrivateKey("/Users/yangzhengwei/Library/Ethereum/testnet/keystore/UTC--2018-03-03T03-51-50.155565446Z--7b1cc408fcb2de1d510c1bf46a329e9027db4112",
+		exportPrivateKey("d:\\Users\\wallet\\Ethereum\\testnet\\keystore/UTC--2018-03-03T03-51-50.155565446Z--7b1cc408fcb2de1d510c1bf46a329e9027db4112",
 				"yzw");
 
 		importPrivateKey(new BigInteger("", 16),
@@ -41,6 +41,7 @@ public class Security {
 			System.out.println(privateKey.toString(16));
 		} catch (IOException | CipherException e) {
 			e.printStackTrace();
+			
 		}
 	}
 
