@@ -49,7 +49,7 @@ public class ArtTokenMain {
 				BigInteger blockNumber = ethBlockNumber.getBlockNumber();
 				System.out.println(blockNumber);
 				//挖矿奖励账户
-				//是否在同步区块
+				//是否在同步区块 sd
 				EthSyncing ethSyncing = web3j.ethSyncing().send();
 				boolean isSyncing = ethSyncing.isSyncing();
 				System.out.println(isSyncing);
