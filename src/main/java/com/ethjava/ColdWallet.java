@@ -27,8 +27,14 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * 冷钱包
@@ -38,6 +44,7 @@ public class ColdWallet {
 
 	private static Web3j web3j;
 
+	 private static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm") ;
 	private static String d = "/Users/wallet";
 
 	private static String address = "0xa530d89646db11abfa701e148e87324355fc6ea7";
@@ -49,6 +56,9 @@ public class ColdWallet {
 	public static void main(String[] args) {
 		web3j = Web3j.build(new HttpService(Environment.RPC_URL));
 		try {
+			
+			System.out.println(getUTCTimeStr());
+
 			createWallet("11111111");
 //			decryptWallet(keystore, "11111111");
 //			testTransaction();
@@ -57,6 +67,40 @@ public class ColdWallet {
 			e.printStackTrace();
 		}
 	}
+	
+	   public static String getUTCTimeStr() {
+	        StringBuffer UTCTimeBuffer = new StringBuffer();
+	        // 1、取得本地时间：
+	        Calendar cal = Calendar.getInstance() ;
+	        // 2、取得时间偏移量：
+	        int zoneOffset = cal.get(java.util.Calendar.ZONE_OFFSET);
+	        // 3、取得夏令时差：
+	        int dstOffset = cal.get(java.util.Calendar.DST_OFFSET);
+	        // 4、从本地时间里扣除这些差量，即可以取得UTC时间：
+	        cal.add(java.util.Calendar.MILLISECOND, -(zoneOffset + dstOffset));
+	        int year = cal.get(Calendar.YEAR);
+	        int month = cal.get(Calendar.MONTH)+1;
+	        int day = cal.get(Calendar.DAY_OF_MONTH);
+	        int hour = cal.get(Calendar.HOUR_OF_DAY);
+	        int minute = cal.get(Calendar.MINUTE); 
+	        float minutes= cal.get(Calendar.MILLISECOND);
+	        UTCTimeBuffer.append(year).append("-").append(paresZero(month)).append("-").append(paresZero(day)) ;
+	        UTCTimeBuffer.append(" ").append(paresZero(hour)).append(":").append(paresZero(minute)).append(minutes/1000) ;
+	        try{
+	            format.parse(UTCTimeBuffer.toString()) ;
+	            return "UTC--"+ UTCTimeBuffer.toString() ;
+	        }catch(ParseException e)
+	        {
+	            e.printStackTrace() ;
+	        }
+	        return null ;
+	    }
+	   
+	   private static String paresZero(int num)
+	   {
+		   String ret =   num<10? String.format("0%d", num):String.format("%d", num);
+		   return ret;
+	   }
 
 	private static void testTransaction() {
 		BigInteger nonce;
@@ -149,11 +193,10 @@ public class ColdWallet {
 			int i = jsonStr.lastIndexOf("kdf");			
 			String Json1 = jsonStr.substring(0, i-1);
 			String Json2 = jsonStr.substring(i+14);		
-			jsonStr=Json1+Json2;
-			
+			jsonStr=Json1+Json2;	
 			
 		}
-		
+	
 		
 		System.out.println("keystore json file " + jsonStr);
 	}
