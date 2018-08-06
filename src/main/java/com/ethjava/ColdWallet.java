@@ -38,7 +38,7 @@ public class ColdWallet {
 
 	private static Web3j web3j;
 
-	private static String d = "/Users/yangzhengwei/Documents/eth/coldwallet";
+	private static String d = "/Users/wallet";
 
 	private static String address = "0xa530d89646db11abfa701e148e87324355fc6ea7";
 
@@ -49,7 +49,7 @@ public class ColdWallet {
 	public static void main(String[] args) {
 		web3j = Web3j.build(new HttpService(Environment.RPC_URL));
 		try {
-//			createWallet("11111111");
+			createWallet("11111111");
 //			decryptWallet(keystore, "11111111");
 //			testTransaction();
 //			testTokenTransaction();
@@ -139,8 +139,22 @@ public class ColdWallet {
 		ECKeyPair ecKeyPair = Keys.createEcKeyPair();
 		walletFile = Wallet.createStandard(password, ecKeyPair);
 		System.out.println("address " + walletFile.getAddress());
+		System.out.println("keypair:"+ecKeyPair.getPrivateKey());
+		System.out.println("keypair:"+ecKeyPair.getPrivateKey().toString(16));
 		ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
 		String jsonStr = objectMapper.writeValueAsString(walletFile);
+		String [] atemArry = jsonStr.split("scrypt");
+		if(atemArry.length>2)
+		{
+			int i = jsonStr.lastIndexOf("kdf");			
+			String Json1 = jsonStr.substring(0, i-1);
+			String Json2 = jsonStr.substring(i+14);		
+			jsonStr=Json1+Json2;
+			
+			
+		}
+		
+		
 		System.out.println("keystore json file " + jsonStr);
 	}
 
