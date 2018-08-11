@@ -95,9 +95,12 @@ public class BallotMain {
 		BigInteger amount = new BigInteger("10000000000000000000");
 		try {
 			BigInteger perIdx = new BigInteger("0");
-			BigInteger retNum =  contract.getProposalNum().send();
-			System.out.println("retNum:"+retNum);
-			TransactionReceipt receipt = contract.vote(perIdx).send();
+//			BigInteger retNum =  contract.getProposalNum().send();
+//			System.out.println("retNum:"+retNum);
+			BigInteger activeId = new BigInteger("0");
+			BigInteger artistId = new BigInteger("1");
+			BigInteger ticket = new BigInteger("12");
+			TransactionReceipt receipt = contract.vote(activeId, artistId, ticket).send();
 			System.out.println("transHash:"+receipt.getTransactionHash());
 //			BigInteger balance = contract.balanceOf(myAddress).send();
 //			System.out.println("balance:"+balance);
