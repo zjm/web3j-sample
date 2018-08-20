@@ -2,10 +2,23 @@ package com.ethjava.sol;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Array;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthBlockNumber;
+import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.EthHashrate;
 import org.web3j.protocol.core.methods.response.EthMining;
@@ -15,7 +28,9 @@ import org.web3j.protocol.core.methods.response.NetPeerCount;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple5;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import com.ethjava.utils.Environment;
 
@@ -32,9 +47,9 @@ public class BallotMain {
 		 System.out.println(address);
 		 web3j = Web3j.build(new HttpService(Environment.RPC_URL));
 		 
-		 ethInfo();
-		 use();
-		 
+		 //ethInfo();
+		// use();
+		 gtArtistInfo();
 
 	}
 	private static void ethInfo() {
@@ -108,6 +123,39 @@ public class BallotMain {
 //			System.out.println("gasUsed:"+receipt.getGasUsed());
 //			System.out.println("transHash:"+receipt.getTransactionHash());
 			//etc..
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void gtArtistInfo() {
+
+		
+		String contractAddress = "0xCF6d39aD5CF5fb6701757AB6294996e7183E5a38";	
+		int max=10;
+		int min=2;
+		int randomNumber = (int) Math.round(Math.random()*(max-min)+min); 
+		
+		System.out.println("10~100之间随机数："+randomNumber);
+//		ArtToken contract = ArtToken.load(contractAddress, web3j, credentials,
+//				Convert.toWei(String.valueOf(randomNumber), Convert.Unit.GWEI).toBigInteger(),
+//				BigInteger.valueOf(100000));
+		Traceability contract = Traceability.load(contractAddress, web3j, credentials,
+				Convert.toWei(String.valueOf(randomNumber), Convert.Unit.GWEI).toBigInteger(),
+				BigInteger.valueOf(100000));
+		String hash = "0xa74970a2120d060fe8f3e4ddb12437143365ccee8ee56708b748a27bfa26311e";
+		byte[] arryHash = Numeric.hexStringToByteArray(hash);
+		//byte[] arryHash = hash.getBytes();
+		System.out.println("length:"+arryHash.length);
+		
+		try {			
+			
+			Tuple5 tuple5 = new Tuple5<BigInteger, String, String, String, BigInteger>(new BigInteger("0"), "", "", "",new BigInteger("0"));
+			tuple5 = contract.ArtistInfo(arryHash).send();
+			System.out.println("tuple5:"+tuple5.getValue1()+","+tuple5.getValue2()+","+tuple5.getValue3()+","+tuple5.getValue4()+","+tuple5.getValue5());
+			
+			//TransactionReceipt receipt = contract.vote(activeId, artistId, ticket).send();
+			//System.out.println("transHash:"+receipt.getTransactionHash());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

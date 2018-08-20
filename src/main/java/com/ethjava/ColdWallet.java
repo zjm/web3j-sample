@@ -10,6 +10,7 @@ import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.DynamicBytes;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
@@ -148,7 +149,7 @@ public class ColdWallet {
 		nonce = ethGetTransactionCount.getTransactionCount();
 		BigInteger gasPrice = Convert.toWei(BigDecimal.valueOf(3), Convert.Unit.GWEI).toBigInteger();
 		BigInteger gasLimit = BigInteger.valueOf(30000);
-		String to = "0x6c0f49aF552F2326DD851b68832730CB7b6C0DaF".toLowerCase();
+		String to = "0x02B7467c6Df772A7D3B8C346afD6DA4923e9B16A".toLowerCase();
 		BigInteger value = Convert.toWei(BigDecimal.valueOf(0.5), Convert.Unit.ETHER).toBigInteger();
 		String data = "";
 		byte chainId = ChainId.ROPSTEN;// 测试网络
@@ -383,6 +384,8 @@ public class ColdWallet {
 			inputParameters.add(new Uint256(activeIds));
 			inputParameters.add(new Uint256(artistIds));
 			inputParameters.add(new Uint256(tickets));
+			String hash = "0xa74970a2120d060fe8f3e4ddb12437143365ccee8ee56708b748a27bfa26311e";
+			
 			TypeReference<Bool> typeReference = new TypeReference<Bool>() {
 			};
 			outputParameters.add(typeReference);
