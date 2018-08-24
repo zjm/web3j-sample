@@ -1,4 +1,4 @@
-package com.ethjava.utils;
+package com.chuangshi.cloud.blockart.ethereumwallet;
 
 import jnr.ffi.Struct;
 import org.apache.http.HttpEntity;
@@ -19,6 +19,8 @@ import java.security.SecureRandom;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtils {
 
@@ -27,14 +29,14 @@ public class FileUtils {
 	// 转换格式
 	private static final String TRANSFORMATION = "DES/ECB/PKCS5Padding";
 
-	private static String keyStr = "12345678";
+	private static String keyStr = "p8k1d5y9";
 
 //	private static String dirEncryptPath = "\\encrypt";
 ////	private static String dirDecryptPath = "\\dencrypt";
 
-	public static void main(String[] args) {
-
-		try {
+//	public static void main(String[] args) {
+//
+//		try {
 //			
 //			 TestDES td = new TestDES("aaa");   
 //			 td.encrypt("e:/r.txt", "e:/r解密.txt"); //加密   
@@ -56,10 +58,10 @@ public class FileUtils {
 //			System.out.println("url:"+url);
 //			sendHttpGet(url);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public static boolean makeDir(String dir) {
 		File filePath = new File(dir);
@@ -161,6 +163,18 @@ public class FileUtils {
 		}
 	}
 
+	public  static  void deleteFileByFileName(String fileName)
+	{
+	//	String tmpFileName ="temp.tmp"; //dirEncryptPath + File.separator + "temp.tmp";
+		File file = new File(fileName);
+		if (file.exists()&&file.isFile()) {
+			file.delete();
+			//	System.out.println(rets);
+			//System.out.println("tmpFileName:" + tmpFileName);
+
+		}
+	}
+
 	public static String readKeyPairFromFile(String fileName) {
 		String destFileName =fileName;//dirDecryptPath + File.separator + fileName;
 		File file = new File(destFileName);
@@ -182,6 +196,60 @@ public class FileUtils {
 			e.printStackTrace();
 			return "";
 		}
+	}
+
+	/**
+	 *
+	 * @param fileName 文件绝对路径
+	 * @return 字节数组
+	 */
+	public static    byte[] readByteArryFromFile(String fileName) {
+		String destFileName =fileName;//dirDecryptPath + File.separator + fileName;
+		File file = new File(destFileName);
+		if (!file.exists()) {
+			return null;
+		}
+
+		try {
+			InputStream inputStream = new FileInputStream(file);
+			byte[] bs = new byte[(int) file.length()];
+			inputStream.read(bs);
+			inputStream.close();
+
+			//System.out.println(new String(bs));
+			return  bs;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * 获取路径下的所有文件/文件夹
+	 * @param directoryPath 需要遍历的文件夹路径
+	 * @param isAddDirectory 是否将子文件夹的路径也添加到list集合中
+	 * @return
+	 */
+	public static List<String> getAllFile(String directoryPath,boolean isAddDirectory) {
+		List<String> list = new ArrayList<String>();
+		File baseFile = new File(directoryPath);
+		if (baseFile.isFile() || !baseFile.exists()) {
+			return list;
+		}
+		File[] files = baseFile.listFiles();
+		for (File file : files) {
+			if (file.isDirectory()) {
+				if(isAddDirectory){
+					list.add(file.getAbsolutePath());
+				}
+				list.addAll(getAllFile(file.getAbsolutePath(),isAddDirectory));
+			} else {
+				list.add(file.getAbsolutePath());
+			}
+		}
+		return list;
 	}
 
 	/**
@@ -261,13 +329,13 @@ public class FileUtils {
 
 	/**
 	 *
-	 * @param fileUrl 文件链接
+	 * @param fileUrl 文件URL链接
 	 */
-	public static  void downLoadFileFromUrl(String fileUrl)
+	public static  String downLoadFileFromUrl(String fileUrl)
 	{
+		int start = fileUrl.lastIndexOf("/");
+		String urlFileName = fileUrl.substring(start+1);
 		try {
-			int start = fileUrl.lastIndexOf("/");
-			String urlFileName = fileUrl.substring(start+1);
 			URL url = new URL(fileUrl);
 			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 			connection.setConnectTimeout(3*1000);
@@ -295,7 +363,10 @@ public class FileUtils {
 		}catch (Exception e)
 		{
 			e.printStackTrace();
+			urlFileName="";
 		}
+
+		return urlFileName;
 
 
 	}
@@ -335,7 +406,7 @@ public class FileUtils {
 			HttpEntity entity = response.getEntity();
 			if (entity!=null){
 				result = EntityUtils.toString(entity);
-				System.out.println("result:"+result);
+				//System.out.println("result:"+result);
 			}
 			return  result;
 
