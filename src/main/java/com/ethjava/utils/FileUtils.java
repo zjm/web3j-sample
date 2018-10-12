@@ -1,4 +1,4 @@
-package com.chuangshi.cloud.blockart.ethereumwallet;
+package com.ethjava.utils;
 
 import jnr.ffi.Struct;
 import org.apache.http.HttpEntity;

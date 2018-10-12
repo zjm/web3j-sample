@@ -29,6 +29,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple5;
+import org.web3j.tuples.generated.Tuple9;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
@@ -150,9 +151,10 @@ public class BallotMain {
 		
 		try {			
 			
-			Tuple5 tuple5 = new Tuple5<BigInteger, String, String, String, BigInteger>(new BigInteger("0"), "", "", "",new BigInteger("0"));
-			tuple5 = contract.ArtistInfo(arryHash).send();
-			System.out.println("tuple5:"+tuple5.getValue1()+","+tuple5.getValue2()+","+tuple5.getValue3()+","+tuple5.getValue4()+","+tuple5.getValue5());
+			Tuple9 tuple = new Tuple9<BigInteger,BigInteger, String, String, String, BigInteger,String, String, String>(new BigInteger("0"),new BigInteger("0"), "", "", "",
+					new BigInteger("0"),"","","");
+			tuple = contract.artistInfo(arryHash).send();
+			System.out.println("tuple5:"+tuple.getValue1()+","+tuple.getValue2()+","+tuple.getValue3()+","+tuple.getValue4()+","+tuple.getValue5());
 			
 			//TransactionReceipt receipt = contract.vote(activeId, artistId, ticket).send();
 			//System.out.println("transHash:"+receipt.getTransactionHash());

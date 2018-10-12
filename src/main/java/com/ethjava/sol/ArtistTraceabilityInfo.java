@@ -3,6 +3,8 @@ package com.ethjava.sol;
 import java.math.BigInteger;
 
 public class ArtistTraceabilityInfo {
+    //艺术品版本号
+    private String version;
     //艺术家Id
     private String artistId;
     //艺术家姓名
@@ -13,6 +15,45 @@ public class ArtistTraceabilityInfo {
     private String note;
     //链上保存日期
     private String createTime;
+    //艺术品名称
+    private String artTitle;
+    //技法
+    private String tecSkill;
+    //规格:有的是长宽高衡量;有的是重量衡量...
+    private String  artSpecification;
+
+    public String getArtTitle() {
+        return artTitle;
+    }
+
+    public void setArtTitle(String artTitle) {
+        this.artTitle = artTitle;
+    }
+
+    public String getTecSkill() {
+        return tecSkill;
+    }
+
+    public void setTecSkill(String tecSkill) {
+        this.tecSkill = tecSkill;
+    }
+
+    public String getArtSpecification() {
+        return artSpecification;
+    }
+
+    public void setArtSpecification(String artSpecification) {
+        this.artSpecification = artSpecification;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
 
     public String getArtistId() {
         return artistId;

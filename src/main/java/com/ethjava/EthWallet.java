@@ -1,12 +1,18 @@
 package com.ethjava;
-import com.alibaba.fastjson.JSON;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.chuangshi.cloud.blockart.traceability.sol.ArtistTraceabilityInfo;
-import com.chuangshi.cloud.blockart.traceability.sol.Traceability;
-import com.chuangshi.cloud.blockart.traceability.sol.TransferArtInfo;
+import com.ethjava.sol.ArtistTraceabilityInfo;
+import com.ethjava.sol.EquitySetpInfo;
+import com.ethjava.sol.Traceability;
+import com.ethjava.sol.TransferArtInfo;
+import com.ethjava.utils.BusinessException;
+import com.ethjava.utils.DesCrypto;
+import com.ethjava.utils.FileUtils;
+import com.ethjava.utils.WalletEnvironment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bouncycastle.util.test.FixedSecureRandom;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -21,9 +27,11 @@ import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple6;
+import org.web3j.tuples.generated.Tuple9;
 import org.web3j.tx.ChainId;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
+
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -46,7 +54,7 @@ public class EthWallet {
 	private static String encryptKey = "p8k1d5y9";
 
 	private static String contractVoteAddress = "0x4b0000b54761A5CdB3B905b35a7fE75F4a8a8f6C";
-	private static String traceabilityContractAddress = "0x6b802A3a2068c673a0ffDb35491C2bC40b774771";
+	private static String traceabilityContractAddress = "0xCd4aD516E826c63Af10dFA39Bf32CE1cF79Cf12A";
 	private static String contractATIAddress = "0x856DD72DADeA09f7d484d1a57eD1f85631E8f57C";
 	private static String contractAETAddress = "0xBEeE86896Ba858DE09248B9319bd76C31609feCe";
 
@@ -55,6 +63,9 @@ public class EthWallet {
 	private static String queryPrikey = "d2d3ac78638113e4c4cce38e6c77db66bea06a845986e760918995bf4fe427cc";
 
 	public static void main(String[] args) {
+
+
+
 //		web3j = Web3j.build(new HttpService(WalletEnvironment.RPC_URL));
 //		String abc ="Qma38BbC6geXpWmvGJwytDNY45XD7JTND1NqLfn2FYeLtg".toLowerCase();
 //        abc = new String(Hash.sha3(abc));
@@ -70,21 +81,71 @@ public class EthWallet {
 
 
 //
-		String prikey = "d2d3ac78638113e4c4cce38e6c77db66bea06a845986e760918995bf4fe427cc";
-		String addr="0x02B7467c6Df772A7D3B8C346afD6DA4923e9B16A";
-       // getTokenBalance(0x37bdd9e4fdc2b8e42f8c6d613a18d0d89123d9a3,0);
-		String ret="";//
-		// tokenTransaction(prikey,contractATIAddress,addr,5000,18);
-		String hash ="0x0f20ebad9c6f2d9a82d434c9031db30cce7a3a7d12f2e4a788ec948c8fe12f2e";
-		byte retByte =  checkTransHashStatus(hash);
-		System.out.println("ret:"+retByte);
+//		String prikey = "d2d3ac78638113e4c4cce38e6c77db66bea06a845986e760918995bf4fe427cc";
+//		String addr="0x02B7467c6Df772A7D3B8C346afD6DA4923e9B16A";
+//       // getTokenBalance(0x37bdd9e4fdc2b8e42f8c6d613a18d0d89123d9a3,0);
+//		String ret="";//
+//		// tokenTransaction(prikey,contractATIAddress,addr,5000,18);
+//		String hash ="0xe62069383f624b461b6dfc3bde0d2a4df00f364cde835a8c992bfebadb30b201";
+//		byte retByte =  checkTransHashStatus(hash);
+//		System.out.println("ret:"+retByte);
+		//String token ="d57a11d9c6ccd5680eaa493dbd6a07123c22370143262ecac22147c99962cc92e80f2ca332b6e8aec3cd184a2cc076af1e3da6f334dce722cac73a8c62603bdb598cda5180b70ef29ff22222d8ce035ec521612e3d64d0a27c0477ff04c2205f0c144b3158c9e84919dcf529f82b285007abe81649a06af88b336ac689765549279b7792709bcafe2bb1a16f6b5c902f7e194ef269651c18398adf374bf3bb440386118160b871e381a828b6b1e45771c286b981c28e9719c00127a5448c4017921c90a9b0e1f07c1eab145665248764603f8f1678b1262f1477303b6abb98247087df8f09fd9642f763eb17fde221bc40973d04db74fa691e843dc2a0d23f19f85acf92d1890edecfe03f9bfbd011de64742d58028f010b69c97e21237ca651471270867637abfa2d054748272e30df1e2f49f33104d1f15526db8c991c3579cb9c336b1d162f385c10e2883efe50c6079a2e75f02cc74ef1a2286bc51b526f4719bb9342701a2e8d9763deb41e115cff755ead6c3976be63ce834053a6355845a71379882a7620d47a579bdeb398cc0b9c2534351fd172a3fbac9b736efed7dd90eb5bc8a5f6964f356fedbfd9267a920c6e825aa541ae121a624e80dcfc091c4ea0abeea5d4d259e0a833c2200549de2f682dd0b2399fec116161c0e31b8431f4fb5fc4d110ed8a9abe4a6041a952";
+//		String toAddress = "0xcc4d0329757f43e65db48d9923b3422622de8f45";
+		String token ="d57a11d9c6ccd5684925b5813e2aad27b96c35364d22153953da3dda0aca8d2b2ee33533baefe334e175da5889f7b97c967c0c5892fac6bccac73a8c62603bdb598cda5180b70ef29ff22222d8ce035ec521612e3d64d0a27c0477ff04c2205f0c144b3158c9e849866147087340971363003bf10e7f342f9b18aec70f782e577b5603a1afc4d33533c8dfc865e9d0187e194ef269651c18a391d17632e112b48ede00d9fc9f1ff1c721261e3b4a1d3f89417f2638a3f17f361097257421a374bae0b25a4a750beb2b0260de17ec8a439f73daacfc6feca99728793b18c0c6547087df8f09fd9642f763eb17fde221bc40973d04db74fa691e843dc2a0d23f19f85acf92d1890edecfe03f9bfbd011de64742d58028f010b69c97e21237ca651e220b911eeffb0a59248dbeb9d0f6c42c41858b3ff14416538fdb81e4d24d4b1aa6a4afb7fabcacf44a500c03873161a4d2353fb70d13933df88198ab4d13ef9ffb342c87e45817e8d9763deb41e115c0554f7cd92637a38e7de5531c48663b8718838b698ecc23d24dcacf71ddce560dad40ce065530b441a9659e0d3f8659fe456bac390d51cb63790dced2d8166c5920c6e825aa541ae780e98c20b2499a73f7fd59034dc3d368076a4b4d7577082e0cfa9e23f2fe202f8d7748a4b7bbe9d31f4fb5fc4d110ed8a9abe4a6041a952";
+//		System.out.println("leng:"+token.length());
+        String toAddress = "0x7d38db2304b9c3f67608348d4a0756ad523a452a";
+//		boolean isa = isAddress(toAddress);
+//		String ret = transfer(token,toAddress,2,(byte)1);
+//		System.out.println("ret:"+ret);
+
+		/////////test ipfs
+		//String ipfskey="QmWvY1v2UfYUCQdHYPUEvWwngXkv7AFq3NQguqUngrNdx5";
+		/*String ipfskey ="QmWvY1v2UfYUCQdHYPUEvWwngXkv7AFq3NQguqUngrNdx5".toLowerCase();
+
+		ArtistTraceabilityInfo ati = new ArtistTraceabilityInfo();
+		ati.setVersion("1");//传整形
+		ati.setArtistId("5566898956656");
+		ati.setArtistName("艺术家姓名");
+		ati.setData("2018-8-23 15:32:00");
+		ati.setNote("艺术家介绍");
+		ati.setArtTitle("艺术标题");
+		ati.setTecSkill("技法");
+		ati.setArtSpecification("重5.03克");
+		//set info
+		setArtistTraceabilityInfo(ipfskey,queryPrikey,ati);
+		//查询 0xc5cee2544383651a825c4336a4eb6f28b71ea7195936b027f256fbb299770aaf
+		//String transHash = "0xc5cee2544383651a825c4336a4eb6f28b71ea7195936b027f256fbb299770aaf";
+		ArtistTraceabilityInfo ati2 =getTraceabilityArtistInfo(ipfskey);
+		System.out.println("get ati2:"+ati2.getTecSkill()+",time:"+ati2.getData());
+		//-------------流转-----------
+		System.out.println("key:"+ipfskey);
+		TransferArtInfo tai = new TransferArtInfo();
+		tai.setSellerMemberId("5689991");
+		tai.setSeller("出售买者281");
+		tai.setBuyerMemberId("66689898991");
+		tai.setBuyer("购买者281");
+		tai.setTransTime("2018-9-21 15:30:28");
+		tai.setNote("备注信息");
+
+		//
+		setArtistTransfer(ipfskey,tai);
+		//----查询--------0x87ee24a4568ec403b77ea28de12c52d06da7fd71470fa6d32e033d21afec990e
+		List<TransferArtInfo> list =  getTransferArtInfo(ipfskey);
+		for(TransferArtInfo info:list)
+		{
+		//	System.out.println("info:"+info.getBuyerMemberId()+","+info.getBuyer()+","+info.getSellerMemberId()+","+info.getSeller()+","+info.getTransTime()+","+info.getNote());
+
+		}*/
+
+
+		////////end test ipfs
 
 		//System.out.println("ret2:"+ret);
 //		String  toAddress ="0x02B7467c6Df772A7D3B8C346afD6DA4923e9B16A";
 		// eTHTransaction(prikey,toAddress);
 		 try {
 
-		     createWallet();
+		    // createWallet();
 			// transferTest();
 		// FileUtils.readKeyPairFromFile();
 		// decryptWallet(keystore, "11111111");
@@ -104,14 +165,46 @@ public class EthWallet {
 	}
 
 	/**
+	 * 验证eth地址合法性
+	 * @param address 待验证地址
+	 * @return true eth地址，false非eth地址
+	 */
+	public static boolean  isAddress(String address)
+	{
+		boolean isAdress = false;
+		if ( address.isEmpty() || !address.toLowerCase().startsWith("0x") || address.length()!=42 )
+		{
+			return  isAdress;
+		}
+		String addressCont = address.substring(2,address.length());
+		for(int i=0;i<addressCont.length();i++){
+			char cc = addressCont.charAt(i);
+			if(cc=='0'||cc=='1'||cc=='2'||cc=='3'||cc=='4'||cc=='5'||cc=='6'||cc=='7'||cc=='8'||cc=='9'||cc=='A'||cc=='B'||cc=='C'||
+					cc=='D'||cc=='E'||cc=='F'||cc=='a'||cc=='b'||cc=='c'||cc=='c'||cc=='d'||cc=='e'||cc=='f'){
+				isAdress = true;
+			}else
+			{
+				isAdress = false;
+				break;
+			}
+		}
+		return isAdress;
+
+	}
+	/**
 	 *转账
 	 * @param content 加密内容
 	 * @param toAddress 接收币地址
 	 * @param amount 币数量
 	 * @param tokenType 0.代表ATI,1.代表AET
+	 * @return  hash:成功,-1 目标地址错误
 	 */
 	public static String transfer(String content,String toAddress,double amount,byte tokenType)
 	{
+		if (!isAddress(toAddress))
+		{
+			throw  new BusinessException("地址不正确");
+		}
 		String contractAddr = contractATIAddress;
 		if (tokenType==1)
 		{
@@ -127,8 +220,14 @@ public class EthWallet {
 		{
 			e.printStackTrace();
 		}
-		//System.out.println("transfer prikey:"+priKey);
-		return tokenTransaction(content,contractAddr,toAddress,amount,18);
+
+		String rethash = tokenTransaction(priKey,contractAddr,toAddress,amount,18);
+		if (rethash.isEmpty())
+		{
+			throw  new BusinessException("请确认ETH手续费是否充足！");
+		}
+		//System.out.println("rethash:"+rethas.length());
+		return  rethash;
 	}
 
 	public static String getUTCTimeStr() {
@@ -229,6 +328,7 @@ public class EthWallet {
 			ethValue = Convert.fromWei(String.valueOf(balanceValue), Convert.Unit.ETHER).doubleValue();
 			//System.out.println("balanceValue:"+ethValue);
 		} catch (IOException e) {
+			ethValue=0;
 			e.printStackTrace();
 		}
 		return ethValue;
@@ -288,6 +388,13 @@ public class EthWallet {
 		createWeb3j();
 		Credentials credentials = Credentials.create(privateKey);// 可以根据私钥生成
 		String address = credentials.getAddress().toLowerCase();
+		double balanValue = getTokenBalance(address, (byte) 1);
+		if (balanValue < amount)
+		{
+			System.out.println("余额不足==");
+			throw  new BusinessException("余额不足！");
+		}
+		//System.out.println("address:"+address);
 		BigInteger nonce = getNonce(address);
 		BigInteger gasPrice = Convert.toWei(BigDecimal.valueOf(3), Convert.Unit.GWEI).toBigInteger();
 		BigInteger value = BigInteger.ZERO;
@@ -316,7 +423,12 @@ public class EthWallet {
 				EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(signedData).send();
 
 				retHash = ethSendTransaction.getTransactionHash();
-				System.out.println(ethSendTransaction.getTransactionHash());
+				if(ethSendTransaction.hasError())
+				{
+					System.out.println("error:"+ethSendTransaction.getError().getMessage());
+				}
+
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -333,6 +445,7 @@ public class EthWallet {
 		WalletFile walletFile;
 		ECKeyPair ecKeyPair = Keys.createEcKeyPair();
 		walletFile = Wallet.createStandard(encryptKey, ecKeyPair);
+		walletFile.getAddress();
 	//	System.out.println("address " + walletFile.getAddress());
 	//	System.out.println("keypair0:" + ecKeyPair.getPrivateKey());
 	//	System.out.println("keypair1:" + ecKeyPair.getPrivateKey().toString(16));
@@ -404,7 +517,8 @@ public class EthWallet {
 			if ("Invalid password provided".equals(e.getMessage())) {
 				System.out.println("密码错误");
 			}
-			e.printStackTrace();
+			throw  new BusinessException("密码错误！");
+			//e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -640,6 +754,7 @@ public class EthWallet {
 			System.out.println("result:" + results.get(0).getValue().toString());
 			// decimal = Integer.parseInt(results.get(0).getValue().toString());
 		} catch (InterruptedException | ExecutionException e) {
+
 			e.printStackTrace();
 		}
 		return decimal;
@@ -678,55 +793,54 @@ public class EthWallet {
 	//////////////////////////////////// 溯源//Start/////////////////////////////////////////
 
 	/**
-	 * 设置艺术家信息
 	 *
-	 * @param ipfsEthHas ipfs计算后的ETHhash值
-	 * @param artistId   艺术家ID
-	 * @param artistName 艺术家姓名
-	 * @param date       艺术品创建日期
-	 * @param note       备注信息
+	 * @param ipfsHash ipfs hash(QmWvY1v2UfYUCQdHYPUEvWwngXkv7AFq3NQguqUngrNdx5)
+	 * @param privateKey 溯源账号私钥
+	 * @param ati 艺术品信息
+	 * @return hash 交易hash值
 	 */
-	public static String setArtistTraceabilityInfo(String ipfsEthHas, BigInteger artistId, String artistName,
-												   String date, String note) {
+	public static String setArtistTraceabilityInfo(String ipfsHash, String privateKey,ArtistTraceabilityInfo ati) {
 
 		createWeb3j();
-		byte[] arryHash = Numeric.hexStringToByteArray(ipfsEthHas);
-		Credentials credentials = Credentials.create(queryPrikey);// 可以根据私钥生成
+		String ipfsEthHash = Hash.sha3(ipfsHash);
+		byte[] arryHash = Numeric.hexStringToByteArray(ipfsEthHash);
+		Credentials credentials = Credentials.create(privateKey);// 可以根据私钥生成
 		String address = credentials.getAddress();
 		System.out.println("createWeb3jaddress--:" + address);
 		Traceability contract = Traceability.load(traceabilityContractAddress, web3j, credentials,
 				Convert.toWei(String.valueOf(priGasPrice), Convert.Unit.GWEI).toBigInteger(), gasLimit);
 		try {
-
-			TransactionReceipt receipt = contract.setArtistInfor(arryHash, artistId, artistName, date, note).sendAsync()
+			BigInteger bi = BigInteger.valueOf(Long.valueOf(ati.getArtistId()));
+			TransactionReceipt receipt = contract.setArtistInfor(arryHash,bi,ati.getArtistName(), ati.getData(), ati.getNote(),
+					ati.getArtTitle(),ati.getTecSkill(),ati.getArtSpecification()).sendAsync()
 					.get();
-			System.out.println("transHash:" + receipt.getTransactionHash());
+			//System.out.println("transHash:" + receipt.getTransactionHash());
 			return receipt.getTransactionHash();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "";
+			throw  new BusinessException("请确认ETH手续费是否充足！");
+
 		}
 
 	}
 
 	/**
 	 *
-	 * @param hash ipfs计算后的hash值
-	 * @return 溯源艺术家信息
+	 * @param ipfsHash ipfshash
+	 * @return 溯源艺术品信息
 	 */
-	public static ArtistTraceabilityInfo getTraceabilityArtistInfo(String hash) {
+	public static ArtistTraceabilityInfo getTraceabilityArtistInfo(String ipfsHash) {
 		createWeb3j();
-		String vhash = hash.trim().isEmpty() ? "0xa74970a2120d060fe8f3e4ddb12437143365ccee8ee56708b748a27bfa26311e"
-				: hash;
-
+		String vhash = Hash.sha3(ipfsHash);
 		byte[] arryHash = Numeric.hexStringToByteArray(vhash);
 		Credentials credentials = Credentials.create(queryPrikey);
 		Traceability contract = Traceability.load(traceabilityContractAddress, web3j, credentials,
 				Convert.toWei(String.valueOf(priGasPrice), Convert.Unit.GWEI).toBigInteger(),
 				BigInteger.valueOf(100000));
-		Tuple6 tuple = new Tuple6<BigInteger,BigInteger, String, String, String, BigInteger>(new BigInteger("0"),new BigInteger("0"), "", "", "",
-				new BigInteger("0"));
+		//BigInteger, BigInteger, String, String, String, BigInteger, String, String, String
+		Tuple9 tuple = new Tuple9<BigInteger,BigInteger, String, String, String, BigInteger,String, String, String>(new BigInteger("0"),new BigInteger("0"), "", "", "",
+				new BigInteger("0"),"","","");
 		ArtistTraceabilityInfo retArtistInfo = new ArtistTraceabilityInfo();
 		try {
 			tuple = contract.artistInfo(arryHash).send();
@@ -736,7 +850,10 @@ public class EthWallet {
 			retArtistInfo.setData(tuple.getValue4().toString());
 			retArtistInfo.setNote(tuple.getValue5().toString());
 			retArtistInfo.setCreateTime(tuple.getValue6().toString());
-			System.out.println("result:"+retArtistInfo.getNote());
+			retArtistInfo.setArtTitle(tuple.getValue7().toString());
+			retArtistInfo.setTecSkill(tuple.getValue8().toString());
+			retArtistInfo.setArtSpecification(tuple.getValue9().toString());
+			System.out.println("result:"+retArtistInfo.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -744,15 +861,49 @@ public class EthWallet {
 	}
 
 	/**
+	 * 设置艺术流转
+	 * @param ipfs_Hash
+	 * @param tai 艺术品信息
+	 * @return
+	 */
+
+    public static  String setArtistTransfer(String ipfs_Hash,TransferArtInfo tai)
+	{
+		createWeb3j();
+		//String ipfsEthHash =  Hash.sha3(ipfs_Hash).toString();
+		byte[] arryHash = Numeric.hexStringToByteArray(Hash.sha3(ipfs_Hash));
+		Credentials credentials = Credentials.create(queryPrikey);// 可以根据私钥生成
+		String address = credentials.getAddress();
+		System.out.println("createWeb3jaddress--:" + address);
+		Traceability contract = Traceability.load(traceabilityContractAddress, web3j, credentials,
+				Convert.toWei(String.valueOf(priGasPrice), Convert.Unit.GWEI).toBigInteger(), gasLimit);
+		String retStr ="";
+
+		try {
+
+			TransactionReceipt receipt = contract.setTransfer(arryHash,tai.getBuyerMemberId(),tai.getSeller(),tai.getBuyerMemberId(),
+					tai.getBuyer(),tai.getTransTime(),tai.getNote()).sendAsync().get();
+
+			retStr = receipt.getTransactionHash();
+			System.out.println("hash:"+retStr);
+
+		}catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return  retStr;
+
+	}
+
+	/**
 	 *
-	 * @param hash ipfs计算后的hash值
+	 * @param ipfshash ipfshash值
 	 * @return 溯源艺术流转信息
 	 */
-	public static List<TransferArtInfo> getTransferArtInfo(String hash) {
+	public static List<TransferArtInfo> getTransferArtInfo(String ipfshash) {
 		createWeb3j();
-		String vhash = hash.trim().isEmpty() ? "0xa74970a2120d060fe8f3e4ddb12437143365ccee8ee56708b748a27bfa26311e"
-				: hash;
-		vhash="0x091ae17f94aa3c5d9d10a9f5967ec1c99fc4ce1453a4d8bc73907ba0adfe97da";
+		String vhash = Hash.sha3(ipfshash);
+		//vhash="0x091ae17f94aa3c5d9d10a9f5967ec1c99fc4ce1453a4d8bc73907ba0adfe97da";
 		byte[] arryHash = Numeric.hexStringToByteArray(vhash);
 		Credentials credentials = Credentials.create(queryPrikey);
 		Traceability contract = Traceability.load(traceabilityContractAddress, web3j, credentials,
@@ -763,6 +914,7 @@ public class EthWallet {
 		List<TransferArtInfo> listTransInfo = new ArrayList<TransferArtInfo>();
 		try {
 			String retInfo = contract.getTransInfo(arryHash).sendAsync().get();
+			System.out.println("TransferretInfo:"+retInfo);
 		    String[] InfoArry = retInfo.split(objsplit);
 			String[] files = null;
 			TransferArtInfo artInfo = null;
@@ -772,8 +924,8 @@ public class EthWallet {
 				 files = strObj.split(filesplit);
 				// System.out.println("resultstrObj:" + strObj);
 				 i=0;
+				 artInfo = new TransferArtInfo();
                  for(String strFile:files) {
-                 	artInfo = new TransferArtInfo();
                  	switch (i)
 					{
 						case 0:
@@ -800,13 +952,118 @@ public class EthWallet {
                  	i++;
 				 }
 				 listTransInfo.add(artInfo);
-				// System.out.println("result:" + artInfo.getNote());
+				 //System.out.println("result:" + artInfo.getNote());
 			 }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return listTransInfo;
 	}
+
+
+
+	/**
+	 * 权益步骤
+	 * @param privateKey
+	 * @param esi
+	 * @return
+	 */
+	public static String setExchangeEquitySetp(String privateKey,EquitySetpInfo esi) {
+
+		createWeb3j();
+//		String ipfsEthHash = Hash.sha3(ipfsHash);
+//		byte[] arryHash = Numeric.hexStringToByteArray(ipfsEthHash);
+		Credentials credentials = Credentials.create(privateKey);// 可以根据私钥生成
+		String address = credentials.getAddress();
+		System.out.println("createWeb3jaddress--:" + address);
+		Traceability contract = Traceability.load(traceabilityContractAddress, web3j, credentials,
+				Convert.toWei(String.valueOf(priGasPrice), Convert.Unit.GWEI).toBigInteger(), gasLimit);
+		try {
+			TransactionReceipt receipt = null;
+//			BigInteger bi = BigInteger.valueOf(Long.valueOf(ati.getArtistId()));
+//			TransactionReceipt receipt = contract.setArtistInfor(arryHash,bi,ati.getArtistName(), ati.getData(), ati.getNote(),
+//					ati.getArtTitle(),ati.getTecSkill(),ati.getArtSpecification()).sendAsync()
+//					.get();
+			receipt = contract.setExchangeEquitySetp(esi.getArtworkId(),esi.getArtistId(),esi.getArtistName(),
+					esi.getEquityTitle(),esi.getStepName(),esi.getConstTime(),esi.getCreateTime(),esi.getNote()).sendAsync().get();
+			//System.out.println("transHash:" + receipt.getTransactionHash());
+			return receipt.getTransactionHash();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw  new BusinessException("请确认ETH手续费是否充足！");
+
+		}
+
+	}
+
+	/**
+	 * 获取行权骤信息
+	 * @param workId 行权id
+	 * @return
+	 */
+
+	public static List<EquitySetpInfo> getExchangeEquitySetp(BigInteger workId)
+	{
+		createWeb3j();
+		Credentials credentials = Credentials.create(queryPrikey);
+		Traceability contract = Traceability.load(traceabilityContractAddress, web3j, credentials,
+				Convert.toWei(String.valueOf(priGasPrice), Convert.Unit.GWEI).toBigInteger(),
+				BigInteger.valueOf(100000));
+		String objsplit="&_&_&";
+		String  filesplit="&-&-&";
+		List<EquitySetpInfo> listTransInfo = new ArrayList<EquitySetpInfo>();
+		try {
+			String retInfo = contract.getExchangeEquitySetp(workId).sendAsync().get();
+			System.out.println("TransferretInfo:"+retInfo);
+			String[] InfoArry = retInfo.split(objsplit);
+			String[] files = null;
+			EquitySetpInfo setpInfo = null;
+			int i=0;
+			//System.out.println("result:" + retInfo);
+			for(String strObj:InfoArry) {
+				files = strObj.split(filesplit);
+				// System.out.println("resultstrObj:" + strObj);
+				i=0;
+				setpInfo = new EquitySetpInfo();
+				for(String strFile:files) {
+					switch (i)
+					{
+						case 0:
+							setpInfo.setArtistId(strFile);
+							break;
+						case 1:
+							setpInfo.setArtistName(strFile);
+							break;
+						case 2:
+							setpInfo.setEquityTitle(strFile);
+							break;
+						case 3:
+							setpInfo.setStepName(strFile);
+							break;
+						case 4:
+							setpInfo.setConstTime(strFile);
+							break;
+						case 5:
+							setpInfo.setCreateTime(strFile);
+							break;
+						case 6:
+							setpInfo.setNote(strFile);
+							break;
+						default:
+							break;
+					}
+					i++;
+				}
+				listTransInfo.add(setpInfo);
+				//System.out.println("result:" + artInfo.getNote());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listTransInfo;
+	}
+
 
 	//////////////////////////////////// 溯源//End/////////////////////////////////////////
 

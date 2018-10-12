@@ -1,5 +1,4 @@
-package com.chuangshi.cloud.blockart.ethereumwallet;
-
+package com.ethjava.utils;
 /**
  * 运行配置项
  */
